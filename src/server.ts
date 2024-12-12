@@ -1,15 +1,35 @@
 import express from 'express';
 import cors from 'cors';
-import userRoutes from './routes/routes';
+import routes from './routes/userRoutes';
+import pool from './db';
 
-const app = express();
+class App {
+  public express: express.Application;
 
-app.use(cors());
-app.use(express.json());
-app.use(userRoutes);
+  constructor() {
+    this.express = express();
+    this.middlewares();
+    this.routes();
+    this.database();
+  }
 
-const PORT = process.env.PORT || 3000;
+  private middlewares(): void {
+    this.express.use(express.json());
+    this.express.use(cors());
+  }
 
-app.listen(PORT, () => {
-  console.log("Servidor rodando na porta ${PORT}");
-});
+  private routes(): void {
+    this.express.use(routes);
+  }
+
+  private async database(): Promise<void> {
+    try {
+      await pool.query('SELECT NOW()');
+      console.log('Database connected successfully');
+    } catch (error) {
+      console.error('Unable to connect to the database:', error);
+    }
+  }
+}
+
+export default new App().express;
