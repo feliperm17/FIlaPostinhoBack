@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import { userRoutes } from 'routes'
+import userRoutes from './routes/routes';
 
 const app = express();
 
@@ -11,5 +11,5 @@ app.use(userRoutes);
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log("Servidor rodando na porta ${PORT})"
+  console.log("Servidor rodando na porta ${PORT}");
 });

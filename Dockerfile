@@ -17,4 +17,4 @@ COPY . .
 EXPOSE 3000
 
 # Comando para rodar o servidor
-CMD ["npm", "start"]
+CMD ["npm", "run", "start"]
