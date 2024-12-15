@@ -1,20 +1,5 @@
-# Use uma imagem base do Node.js
-FROM node:16
+FROM postgres:17.2-alpine
 
-# Crie um diretório de trabalho no contêiner
-WORKDIR /usr/src/app
+COPY ./src/scripts/create_db.sql /docker-entrypoint-initdb.d/
 
-# Copie o package.json e o package-lock.json
-COPY package*.json ./
-
-# Instale as dependências
-RUN npm install
-
-# Copie o código restante para o contêiner
-COPY . .
-
-# Exponha a porta que a aplicação vai rodar
-EXPOSE 3000
-
-# Comando para rodar o servidor
-CMD ["npm", "run", "start"]
+EXPOSE 5432

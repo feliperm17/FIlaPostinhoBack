@@ -1,11 +1,13 @@
 services:
   db:
-    image: postgres:15
+    build:
+      context: .
+      dockerfile: Dockerfile
     restart: always
     environment:
-      POSTGRES_USER: dev
-      POSTGRES_PASSWORD: 123
-      POSTGRES_DB: FilaPostinho
+      POSTGRES_USER: ${PGUSER}
+      POSTGRES_PASSWORD: ${PGPASSWORD}
+      POSTGRES_DB: ${PGDATABASE}
     ports:
       - "5433:5432"
     volumes:
