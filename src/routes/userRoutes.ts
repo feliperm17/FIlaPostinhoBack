@@ -7,6 +7,9 @@ const userController = new UserController.UserController();
 userRoutes.post('/auth/register', (req: Request, res: Response) => {
     userController.register(req, res);
 });
+userRoutes.post('/auth/login', (req: Request, res: Response) => {
+    userController.login(req, res);
+});
 userRoutes.get('/users', (req: Request, res: Response) => {
     userController.findAllUsers(req, res)}
 );

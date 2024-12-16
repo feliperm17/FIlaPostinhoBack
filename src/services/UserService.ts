@@ -49,6 +49,30 @@ export class UserService {
     }
   }
 
+  async login(email: string, password: string) {
+    try {
+      const result = await this.db.query(userQueries.getUserByEmail, [email]);
+      const user = result.rows[0];
+
+      if (!user) {
+        return null;
+      }
+
+      const isValidPassword = await bcrypt.compare(password, user.password_hash);
+
+      if (!isValidPassword) {
+        return null;
+      }
+
+      // Não retorne a senha no resultado
+      const { password_hash, ...userWithoutPassword } = user;
+      return userWithoutPassword;
+    } catch (error) {
+      console.error('Erro no login:', error);
+      throw error;
+    }
+  }
+
   async findAll() {
     const result = await this.db.query(userQueries.getUsers);
     return result.rows;

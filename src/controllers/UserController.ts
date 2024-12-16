@@ -34,6 +34,26 @@ class UserController {
     }
   }
 
+  async login(req: Request, res: Response) {
+    try {
+      const { email, password } = req.body;
+      
+      if (!email || !password) {
+        return res.status(400).json({ error: 'Email e senha são obrigatórios' });
+      }
+
+      const user = await this.userService.login(email, password);
+      
+      if (!user) {
+        return res.status(401).json({ error: 'Credenciais inválidas' });
+      }
+
+      return res.json(user);
+    } catch (error) {
+      return res.status(500).json({ error: 'Erro ao realizar login' });
+    }
+  }
+
   async findAllUsers(req: Request, res: Response) {
     try {
       const users = await this.userService.findAll();
