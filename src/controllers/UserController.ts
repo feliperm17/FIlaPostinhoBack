@@ -8,12 +8,29 @@ class UserController {
     this.userService = new UserService();
   }
 
-  async createUser(req: Request, res: Response) {
+  async register(req: Request, res: Response) {
     try {
-      const user = await this.userService.create(req.body);
+      const { username, email, password, phone_nr, cpf } = req.body;
+
+      if (!username || !email || !password || !phone_nr || !cpf) {
+        return res.status(400).json({ error: 'Todos os campos são obrigatórios' });
+      }
+
+      const user = await this.userService.create({
+        username,
+        email,
+        password,
+        phone_nr,
+        cpf,
+        account_st: 1 // 1 para conta ativa
+      });
+
       return res.status(201).json(user);
     } catch (error) {
-      return res.status(400).json({ error: 'Erro ao criar usuário' });
+      if (error.message === 'Email já cadastrado') {
+        return res.status(400).json({ error: error.message });
+      }
+      return res.status(500).json({ error: 'Erro ao registrar usuário' });
     }
   }
 
