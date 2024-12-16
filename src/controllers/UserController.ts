@@ -15,17 +15,24 @@ class UserController {
       if (!username || !email || !password || !phone_nr || !cpf) {
         return res.status(400).json({ error: 'Todos os campos são obrigatórios' });
       }
+      const cpf_novo : string = cpf.replace(/\D/g, '');
+      const phone_novo : string = phone_nr.replace(/\D/g, '');
 
       const user = await this.userService.register({
         username,
         email,
         password,
-        phone_nr,
-        cpf,
+        phone_nr: phone_novo,
+        cpf: cpf_novo,
         account_st: 1 // 1 para conta ativa
       });
 
-      return res.status(201).json(user);
+      console.log(`usuario criado: ${user.email}`);
+
+      return res.status(201).json({
+        success: true,
+        user
+      });
     } catch (error) {
       if (error.message === 'Email já cadastrado') {
         return res.status(400).json({ error: error.message });
@@ -39,16 +46,23 @@ class UserController {
       const { email, password } = req.body;
       
       if (!email || !password) {
+        console.log(`Não logado: Sem email ou senha`);
         return res.status(400).json({ error: 'Email e senha são obrigatórios' });
       }
 
       const user = await this.userService.login(email, password);
       
       if (!user) {
+        console.log(`Não logado: Credenciais invalidas`);
         return res.status(401).json({ error: 'Credenciais inválidas' });
       }
 
-      return res.json(user);
+      console.log(`usuario logado: ${user.email}`);
+
+      return res.json({
+         'success': true,
+         user: user 
+      });
     } catch (error) {
       return res.status(500).json({ error: 'Erro ao realizar login' });
     }
