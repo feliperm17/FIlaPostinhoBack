@@ -17,7 +17,7 @@ export class UserService {
     }); 
   }
 
-  async create(user: { 
+  async register(user: { 
     username: string; 
     phone_nr: string; 
     email: string; 
