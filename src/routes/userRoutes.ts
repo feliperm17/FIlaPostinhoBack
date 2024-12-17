@@ -4,8 +4,11 @@ import UserController from '../controllers/controller';
 const userRoutes = express.Router();
 const userController = new UserController.UserController();
 
-userRoutes.post('/users', (req: Request, res: Response) => {
-    userController.createUser(req, res);
+userRoutes.post('/auth/register', (req: Request, res: Response) => {
+    userController.register(req, res);
+});
+userRoutes.post('/auth/login', (req: Request, res: Response) => {
+    userController.login(req, res);
 });
 userRoutes.get('/users', (req: Request, res: Response) => {
     userController.findAllUsers(req, res)}

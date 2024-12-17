@@ -1,4 +1,5 @@
 import { Pool } from 'pg';
+import bcrypt from 'bcrypt';
 import userQueries from '../queries/userQueries'
 import dotenv from 'dotenv';
 dotenv.config();
@@ -16,7 +17,7 @@ export class UserService {
     }); 
   }
 
-  async create(user: { 
+  async register(user: { 
     username: string; 
     phone_nr: string; 
     email: string; 
@@ -25,17 +26,49 @@ export class UserService {
     password: string;
   }) {
     try {
-      const { username, phone_nr, email, cpf, account_st, password } = user;
-      const password_hash = password; // Por enquanto, sem hash para testar
+      // Verificar se o email já existe
+      const emailExists = await this.db.query(userQueries.checkEmail, [user.email]);
+      if (emailExists.rows.length > 0) {
+        throw new Error('Email já cadastrado');
+      }
+
+      // Hash da senha
+      const password_hash = await bcrypt.hash(user.password, 10);
 
       const result = await this.db.query(
         userQueries.addUser, 
-        [username, phone_nr, email, cpf, account_st, password_hash]
+        [user.username, user.phone_nr, user.email, user.cpf, user.account_st, password_hash]
       );
       
-      return result.rows[0];
+      // Não retorne a senha no resultado
+      const { password_hash: _, ...userWithoutPassword } = result.rows[0];
+      return userWithoutPassword;
     } catch (error) {
-      console.error('Erro no UserService.create:', error);
+      console.error('Erro no registro:', error);
+      throw error;
+    }
+  }
+
+  async login(email: string, password: string) {
+    try {
+      const result = await this.db.query(userQueries.getUserByEmail, [email]);
+      const user = result.rows[0];
+
+      if (!user) {
+        return null;
+      }
+
+      const isValidPassword = await bcrypt.compare(password, user.password_hash);
+
+      if (!isValidPassword) {
+        return null;
+      }
+
+      // Não retorne a senha no resultado
+      const { password_hash, ...userWithoutPassword } = user;
+      return userWithoutPassword;
+    } catch (error) {
+      console.error('Erro no login:', error);
       throw error;
     }
   }
