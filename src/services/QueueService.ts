@@ -23,8 +23,10 @@ export class QueueService {
     queue_size : number; 
   }) {
     try {
-      const { specialty, queue_dt, position_nr, queue_size } = queue;
-      
+      const { specialty, queue_size } = queue;
+      const queue_dt = new Date()
+      const position_nr = 0
+
       const result = await this.db.query(
         queueQueries.addQueue, 
         [specialty, queue_dt, position_nr, queue_size]

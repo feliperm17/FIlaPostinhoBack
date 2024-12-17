@@ -3,6 +3,7 @@ import { QueueService } from '../services/QueueService';
 
 class QueueController {
   private queueService: QueueService;
+    static QueueController: any;
 
   constructor() {
     this.queueService = new QueueService();
@@ -17,4 +18,4 @@ class QueueController {
     }
   }
 }
-export default QueueService;
+export default QueueController;
