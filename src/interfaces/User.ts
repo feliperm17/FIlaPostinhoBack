@@ -6,7 +6,6 @@ export interface UserInterface {
   email: string; 
   cpf: string; 
   account_st: number;
-  admin_permission: boolean;
   password ?: string;
 }
 

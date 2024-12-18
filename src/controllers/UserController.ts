@@ -13,7 +13,7 @@ class UserController {
       }
       user.cpf = user.cpf.replace(/\D/g, '');
       user.phone_nr = user.phone_nr.replace(/\D/g, '');
-
+      user.account_st = 0; // Normal User
       const registered = await userService.register(user);
 
       console.log(`usuario criado: ${user.email}`);
@@ -29,6 +29,32 @@ class UserController {
       return res.status(500).json({ error: 'Erro ao registrar usuário' });
     }
   }
+
+  async registerAdmin(req: Request, res: Response) {
+    try {
+      const user = req.body as User;
+
+      if (!user.username || !user.email || !user.password || !user.phone_nr || !user.cpf) {
+        return res.status(400).json({ error: 'Todos os campos são obrigatórios' });
+      }
+      user.cpf = user.cpf.replace(/\D/g, '');
+      user.phone_nr = user.phone_nr.replace(/\D/g, '');
+      user.account_st = 1; // ADMIN
+      const registered = await userService.register(user);
+
+      console.log(`usuario criado: ${user.email}`);
+
+      return res.status(201).json({
+        success: true,
+        user
+      });
+    } catch (error) {
+      if (error.message === 'Email já cadastrado') {
+        return res.status(400).json({ error: error.message });
+      }
+      return res.status(500).json({ error: 'Erro ao registrar usuário' });
+    }
+  }  
 
   async login(req: Request, res: Response) {
     try {

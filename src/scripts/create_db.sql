@@ -1,9 +1,9 @@
 CREATE TABLE IF NOT EXISTS Account(
    account_id SERIAL PRIMARY KEY,
    username VARCHAR(50) NOT NULL,
-   phone_nr CHAR(13) NOT NULL,
+   phone_nr VARCHAR(15) NOT NULL,
    email VARCHAR(50) NOT NULL,
-   cpf CHAR(13) NOT NULL,
+   cpf CHAR(11) NOT NULL,
    account_st NUMERIC NOT NULL,
    password_hash VARCHAR(256) NOT NULL
 );
