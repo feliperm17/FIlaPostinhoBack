@@ -1,4 +1,6 @@
 import { Request, Response } from 'express';
+import { UserInterface as User, UserJwtInterface as UserJwt } from '../interfaces/User';
+import { generateJWT } from '../utils/jwt';
 import { UserService } from '../services/UserService';
 
 class UserController {
@@ -10,22 +12,15 @@ class UserController {
 
   async register(req: Request, res: Response) {
     try {
-      const { username, email, password, phone_nr, cpf } = req.body;
+      const user = req.body as User;
 
-      if (!username || !email || !password || !phone_nr || !cpf) {
+      if (!user.username || !user.email || !user.password || !user.phone_nr || !user.cpf) {
         return res.status(400).json({ error: 'Todos os campos são obrigatórios' });
       }
-      const cpf_novo : string = cpf.replace(/\D/g, '');
-      const phone_novo : string = phone_nr.replace(/\D/g, '');
+      user.cpf = user.cpf.replace(/\D/g, '');
+      user.phone_nr = user.phone_nr.replace(/\D/g, '');
 
-      const user = await this.userService.register({
-        username,
-        email,
-        password,
-        phone_nr: phone_novo,
-        cpf: cpf_novo,
-        account_st: 1 // 1 para conta ativa
-      });
+      const registered = await this.userService.register(user);
 
       console.log(`usuario criado: ${user.email}`);
 
@@ -57,11 +52,17 @@ class UserController {
         return res.status(401).json({ error: 'Credenciais inválidas' });
       }
 
+      const userjwt: UserJwt = user;
+      console.log(`email: ${userjwt.email}`);
+      const token = generateJWT(userjwt);
+
       console.log(`usuario logado: ${user.email}`);
 
+
       return res.json({
-         'success': true,
-         user: user 
+        'success': true,
+        user: user,
+        token: token  
       });
     } catch (error) {
       return res.status(500).json({ error: 'Erro ao realizar login' });

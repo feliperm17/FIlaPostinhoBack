@@ -1,33 +1,15 @@
-import { Pool } from 'pg';
+import db from '../utils/db';
+import {UserInterface as User, UserJwtInterface as UserJwt} from '../interfaces/User';
 import bcrypt from 'bcrypt';
-import userQueries from '../queries/userQueries'
+import userQueries from '../queries/userQueries';
 import dotenv from 'dotenv';
 dotenv.config();
 
 export class UserService {
-  private db: Pool;
-
-  constructor() {
-    this.db = new Pool({
-      user: process.env.PGUSER,
-      password: process.env.PGPASSWORD,
-      host: process.env.PGHOST,
-      database: process.env.PGDATABASE,
-      port: parseInt(process.env.PGPORT || '5433'),
-    }); 
-  }
-
-  async register(user: { 
-    username: string; 
-    phone_nr: string; 
-    email: string; 
-    cpf: string; 
-    account_st: number;
-    password: string;
-  }) {
+  async register(user: User) {
     try {
       // Verificar se o email já existe
-      const emailExists = await this.db.query(userQueries.checkEmail, [user.email]);
+      const emailExists = await db.query(userQueries.checkEmail, [user.email]);
       if (emailExists.rows.length > 0) {
         throw new Error('Email já cadastrado');
       }
@@ -35,12 +17,12 @@ export class UserService {
       // Hash da senha
       const password_hash = await bcrypt.hash(user.password, 10);
 
-      const result = await this.db.query(
+      const result = await db.query(
         userQueries.addUser, 
         [user.username, user.phone_nr, user.email, user.cpf, user.account_st, password_hash]
       );
       
-      // Não retorne a senha no resultado
+      // Não retornar a senha no resultado
       const { password_hash: _, ...userWithoutPassword } = result.rows[0];
       return userWithoutPassword;
     } catch (error) {
@@ -51,7 +33,7 @@ export class UserService {
 
   async login(email: string, password: string) {
     try {
-      const result = await this.db.query(userQueries.getUserByEmail, [email]);
+      const result = await db.query(userQueries.getUserByEmail, [email]);
       const user = result.rows[0];
 
       if (!user) {
@@ -74,12 +56,12 @@ export class UserService {
   }
 
   async findAll() {
-    const result = await this.db.query(userQueries.getUsers);
+    const result = await db.query(userQueries.getUsers);
     return result.rows;
   }
 
   async findById(id: string) {
-    const result = await this.db.query(userQueries.getUserById, [id]);
+    const result = await db.query(userQueries.getUserById, [id]);
     return result.rows[0];
   }
 
@@ -92,7 +74,7 @@ export class UserService {
   }) {
     try {
       const { username, phone_nr, email, cpf, account_st } = user;
-      const result = await this.db.query(
+      const result = await db.query(
         userQueries.updateUser, 
         [username, phone_nr, email, cpf, account_st, id]
       );
@@ -105,7 +87,7 @@ export class UserService {
 
   async delete(id: string) {
     try {
-      const result = await this.db.query(userQueries.deleteUser, [id]);
+      const result = await db.query(userQueries.deleteUser, [id]);
       return result.rowCount > 0;
     } catch (error) {
       console.error('Erro no UserService.delete:', error);
