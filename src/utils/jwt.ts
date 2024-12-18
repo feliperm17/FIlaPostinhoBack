@@ -13,6 +13,10 @@ export function generateJWT(user: UserJwt){
 }
 
 export function verifyJWT(token: string): UserJwt {
-  const user = jwt.verify(token, jwt_key) as UserJwt;
-  return user;
+  try{
+    const user = jwt.verify(token, jwt_key) as UserJwt;
+    return user;
+  } catch (err) {
+    throw err;
+  }
 }

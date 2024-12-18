@@ -1,8 +1,8 @@
 import express, { Request, Response } from 'express';
-import UserController from '../controllers/controller';
+import { userController } from '../controllers/controller';
+import { authentication } from '../middlewares/authentication';
 
 const userRoutes = express.Router();
-const userController = new UserController.UserController();
 
 userRoutes.post('/auth/register', (req: Request, res: Response) => {
     userController.register(req, res);
