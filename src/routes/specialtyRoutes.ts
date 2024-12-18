@@ -5,15 +5,14 @@ import { checkPermissions } from '../middlewares/permission';
 
 const specialtyRoutes = express.Router();
 
-// Todas as rotas requerem autenticação e permissão de administrador
-specialtyRoutes.post('/specialties',
+specialtyRoutes.post('/specialties/',
   authentication,
   checkPermissions(true),
   (req: Request, res: Response) => {
     specialtyController.create(req, res);
 });
 
-specialtyRoutes.get('/specialties',
+specialtyRoutes.get('/specialties/',
   authentication,
   checkPermissions(true),
   (req: Request, res: Response) => {
