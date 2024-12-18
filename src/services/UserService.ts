@@ -12,6 +12,31 @@ export class UserService {
       const emailExists = await db.query(userQueries.checkEmail, [user.email]);
       if (emailExists.rows.length > 0) {
         throw new Error('Email já cadastrado');
+      } 
+
+      // Hash da senha
+      const password_hash = await bcrypt.hash(user.password, 10);
+
+      const result = await db.query(
+        userQueries.addUser, 
+        [user.username, user.phone_nr, user.email, user.cpf, user.account_st, password_hash]
+      );
+      
+      // Não retornar a senha no resultado
+      const { password_hash: _, ...userWithoutPassword } = result.rows[0];
+      return userWithoutPassword;
+    } catch (error) {
+      console.error('Erro no registro:', error);
+      throw error;
+    }
+  }
+
+  async registerAdmin(user: User) {
+    try {
+      // Verificar se o email já existe
+      const emailExists = await db.query(userQueries.checkEmail, [user.email]);
+      if (emailExists.rows.length > 0) {
+        throw new Error('Email já cadastrado');
       }
 
       // Hash da senha

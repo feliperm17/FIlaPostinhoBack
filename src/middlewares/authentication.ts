@@ -24,6 +24,5 @@ export async function authentication(req: Request, res: Response, next: NextFunc
     next();
   } catch (err) {
     res.status(401).json({ error: "Token invalido ou expirado" });
-    return;
   }
 }
