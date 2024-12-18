@@ -18,18 +18,15 @@ export class QueueService {
 
   async create(queue: { 
     specialty: number; 
-    queue_dt: Date; 
-    position_nr : number; 
     queue_size : number; 
   }) {
     try {
-      const { specialty, queue_size } = queue;
       const queue_dt = new Date()
       const position_nr = 0
 
       const result = await this.db.query(
         queueQueries.addQueue, 
-        [specialty, queue_dt, position_nr, queue_size]
+        [queue.specialty, queue_dt, position_nr, queue.queue_size]
       );
       
       return result.rows[0];
@@ -37,5 +34,15 @@ export class QueueService {
       console.error('Erro no QueueService.create:', error);
       throw error;
     }
+  }
+
+  async findAll() {
+    const result = await this.db.query(queueQueries.getQueues);
+    return result.rows;
+  }
+
+  async findById(id: string) {
+    const result = await this.db.query(queueQueries.getQueueById, [id]);
+    return result.rows[0];
   }
 }
