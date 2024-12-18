@@ -1,21 +1,9 @@
-import { Pool } from 'pg';
+import db from '../utils/db';
 import dotenv from 'dotenv';
 import queueQueries from '../queries/queueQueries';
 dotenv.config();
 
 export class QueueService {
-  private db: Pool;
-
-  constructor() {
-    this.db = new Pool({
-      user: process.env.PGUSER,
-      password: process.env.PGPASSWORD,
-      host: process.env.PGHOST,
-      database: process.env.PGDATABASE,
-      port: parseInt(process.env.PGPORT || '5433'),
-    }); 
-  }
-
   async create(queue: { 
     specialty: number; 
     queue_size: number;  
@@ -24,7 +12,7 @@ export class QueueService {
       const queue_dt = new Date();
       const position_nr = 0;
 
-      const result = await this.db.query(
+      const result = await db.query(
         queueQueries.addQueue, 
         [queue.specialty, queue_dt, position_nr, queue.queue_size]
       );
@@ -38,7 +26,7 @@ export class QueueService {
 
   async findAll() {
     try {
-      const result = await this.db.query(queueQueries.getQueues);
+      const result = await db.query(queueQueries.getQueues);
       return result.rows;
     } catch (error) {
       console.error('Erro no QueueService.findAll:', error);
@@ -48,7 +36,7 @@ export class QueueService {
 
   async findById(id: string) {
     try {
-      const result = await this.db.query(queueQueries.getQueueById, [id]);
+      const result = await db.query(queueQueries.getQueueById, [id]);
       return result.rows[0];
     } catch (error) {
       console.error('Erro no QueueService.findById:', error);
@@ -63,7 +51,7 @@ export class QueueService {
   }) {
     try {
       const { specialty, queue_size, position_nr } = queue;
-      const result = await this.db.query(
+      const result = await db.query(
         queueQueries.updateQueue, 
         [queue_size, position_nr, specialty, id]
       );
@@ -76,7 +64,7 @@ export class QueueService {
 
   async delete(id: string) {
     try {
-      const result = await this.db.query(queueQueries.deleteQueue, [id]);
+      const result = await db.query(queueQueries.deleteQueue, [id]);
       return result.rowCount > 0;
     } catch (error) {
       console.error('Erro no QueueService.delete:', error);
@@ -87,7 +75,7 @@ export class QueueService {
   // Métodos adicionais úteis
   async findBySpecialty(specialtyId: number) {
     try {
-      const result = await this.db.query(queueQueries.getQueueBySpecialty, [specialtyId]);
+      const result = await db.query(queueQueries.getQueueBySpecialty, [specialtyId]);
       return result.rows;
     } catch (error) {
       console.error('Erro no QueueService.findBySpecialty:', error);
@@ -97,7 +85,7 @@ export class QueueService {
 
   async getCurrentQueueSize(queueId: string) {
     try {
-      const result = await this.db.query(queueQueries.getQueueSize, [queueId]);
+      const result = await db.query(queueQueries.getQueueSize, [queueId]);
       return parseInt(result.rows[0].total);
     } catch (error) {
       console.error('Erro no QueueService.getCurrentQueueSize:', error);
@@ -107,7 +95,7 @@ export class QueueService {
 
   async getUserPosition(queueId: string, userId: string) {
     try {
-      const result = await this.db.query(queueQueries.getUserPosition, [queueId, userId]);
+      const result = await db.query(queueQueries.getUserPosition, [queueId, userId]);
       return result.rows[0]?.position;
     } catch (error) {
       console.error('Erro no QueueService.getUserPosition:', error);
