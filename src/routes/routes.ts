@@ -1,3 +1,5 @@
 import userRoutes from './userRoutes'
+import specialtyRoutes from './specialtyRoutes';
 
-export default userRoutes;
+const routes = [userRoutes, specialtyRoutes];
+export default routes;
