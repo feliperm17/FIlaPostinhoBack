@@ -1,15 +1,9 @@
 import { Request, Response } from 'express';
 import { UserInterface as User, UserJwtInterface as UserJwt } from '../interfaces/User';
 import { generateJWT } from '../utils/jwt';
-import { UserService } from '../services/UserService';
+import { userService } from '../services/Services';
 
 class UserController {
-  private userService: UserService;
-
-  constructor() {
-    this.userService = new UserService();
-  }
-
   async register(req: Request, res: Response) {
     try {
       const user = req.body as User;
@@ -20,7 +14,7 @@ class UserController {
       user.cpf = user.cpf.replace(/\D/g, '');
       user.phone_nr = user.phone_nr.replace(/\D/g, '');
 
-      const registered = await this.userService.register(user);
+      const registered = await userService.register(user);
 
       console.log(`usuario criado: ${user.email}`);
 
@@ -45,7 +39,7 @@ class UserController {
         return res.status(400).json({ error: 'Email e senha são obrigatórios' });
       }
 
-      const user = await this.userService.login(email, password);
+      const user = await userService.login(email, password);
       
       if (!user) {
         console.log(`Não logado: Credenciais invalidas`);
@@ -71,7 +65,7 @@ class UserController {
 
   async findAllUsers(req: Request, res: Response) {
     try {
-      const users = await this.userService.findAll();
+      const users = await userService.findAll();
       return res.json(users);
     } catch (error) {
       return res.status(500).json({ error: 'Erro ao buscar usuários' });
@@ -80,7 +74,7 @@ class UserController {
 
   async findByUserId(req: Request, res: Response) {
     try {
-      const user = await this.userService.findById(req.params.id);
+      const user = await userService.findById(req.params.id);
       if (!user) return res.status(404).json({ error: 'Usuário não encontrado' });
       return res.json(user);
     } catch (error) {
@@ -90,7 +84,7 @@ class UserController {
 
   async updateUser(req: Request, res: Response) {
     try {
-      const user = await this.userService.update(req.params.id, req.body);
+      const user = await userService.update(req.params.id, req.body);
       if (!user) return res.status(404).json({ error: 'Usuário não encontrado' });
       return res.json(user);
     } catch (error) {
@@ -100,7 +94,7 @@ class UserController {
 
   async deleteUser(req: Request, res: Response) {
     try {
-      const success = await this.userService.delete(req.params.id);
+      const success = await userService.delete(req.params.id);
       if (!success) return res.status(404).json({ error: 'Usuário não encontrado' });
       return res.json({ message: 'Usuário marcado como deletado' });
     } catch (error) {

@@ -1,12 +1,13 @@
 
 export interface UserInterface {
-  id?: number;
+  id ?: number;
   username: string; 
   phone_nr: string; 
   email: string; 
   cpf: string; 
   account_st: number;
-  password: string;
+  admin_permission: boolean;
+  password ?: string;
 }
 
 export interface UserJwtInterface {

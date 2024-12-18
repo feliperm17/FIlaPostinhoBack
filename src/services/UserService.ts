@@ -65,13 +65,7 @@ export class UserService {
     return result.rows[0];
   }
 
-  async update(id: string, user: { 
-    username: string; 
-    phone_nr: string; 
-    email: string; 
-    cpf: string; 
-    account_st: number;
-  }) {
+  async update(id: string, user: User) {
     try {
       const { username, phone_nr, email, cpf, account_st } = user;
       const result = await db.query(
@@ -81,6 +75,20 @@ export class UserService {
       return result.rows[0];
     } catch (error) {
       console.error('Erro no UserService.update:', error);
+      throw error;
+    }
+  }
+
+  async findByEmail(email: string) {
+    try {
+      const result = await db.query(
+        userQueries.checkEmail,
+        [email]
+      );
+      const user: User = await result.rows[0];
+      return user;
+    } catch (error) {
+      console.error('Erro no UserService.findByEmail: ', error);
       throw error;
     }
   }
