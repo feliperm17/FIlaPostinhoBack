@@ -14,14 +14,14 @@ specialtyRoutes.post('/specialties/',
 
 specialtyRoutes.get('/specialties/',
   authentication,
-  checkPermissions(true),
+  checkPermissions(false),
   (req: Request, res: Response) => {
     specialtyController.findAll(req, res);
 });
 
 specialtyRoutes.get('/specialties/:id',
   authentication,
-  checkPermissions(true),
+  checkPermissions(false),
   (req: Request, res: Response) => {
     specialtyController.findById(req, res);
 });

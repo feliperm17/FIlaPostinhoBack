@@ -7,19 +7,19 @@ const queueRoutes = express.Router();
 
 queueRoutes.post('/queue',
     authentication,
-    checkPermissions(true), 
+    checkPermissions(false), 
     (req: Request, res: Response) => {
     queueController.createQueue(req, res);
 });
 queueRoutes.get('/queue',
     authentication,
-    checkPermissions(true), 
+    checkPermissions(false), 
     (req: Request, res: Response) => {
     queueController.findAllQueues(req, res)}
 );
 queueRoutes.get('/queue/:id',
     authentication,
-    checkPermissions(true), 
+    checkPermissions(false), 
     (req: Request, res: Response) => {
     queueController.findQueueById(req, res)
 });
