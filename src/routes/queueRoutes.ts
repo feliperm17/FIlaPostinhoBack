@@ -30,4 +30,11 @@ queueRoutes.put('/queue/:id',
     (req: Request, res: Response) => {
     queueController.updateQueue(req, res);
 });
+
+queueRoutes.delete('/queue/:id',
+    authentication,
+    checkPermissions(true), // only Admins can delete a queue 
+    (req: Request, res: Response) => {
+    queueController.deleteQueue(req, res);
+});
 export default queueRoutes;
