@@ -24,4 +24,10 @@ queueRoutes.get('/queue/:id',
     queueController.findQueueById(req, res)
 });
 
+queueRoutes.put('/queue/:id',
+    authentication,
+    checkPermissions(false), 
+    (req: Request, res: Response) => {
+    queueController.updateQueue(req, res);
+});
 export default queueRoutes;
