@@ -8,6 +8,8 @@ export async function authentication(req: Request, res: Response, next: NextFunc
     const token = req.headers.authorization as string;
     
     if(!token) {
+      console.log('Sem token');
+      console.log(token);
       res.status(401).json({ error: "Sem token"});
       return;
     }
@@ -16,6 +18,7 @@ export async function authentication(req: Request, res: Response, next: NextFunc
     const user: User = await userService.findByEmail(userjwt.email);
     
     if(!user) {
+      console.log('User not found');
       res.status(404).json({ error: "Usuário não encontrado"});
       return;
     }
@@ -23,6 +26,7 @@ export async function authentication(req: Request, res: Response, next: NextFunc
     res.locals.user = user;
     next();
   } catch (err) {
+    console.log('Token invalido');
     res.status(401).json({ error: "Token invalido ou expirado" });
   }
 }

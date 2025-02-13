@@ -15,14 +15,9 @@ export function generateJWT(user: UserJwt){
 export function verifyJWT(token: string): UserJwt {
   console.log(token)
   try{
-    const x = token.split(' ')[1]
-    console.log("bah")
-    console.log(x);
-    const user = jwt.verify(x, jwt_key) as UserJwt;
-    console.log(user);
+    const user = jwt.verify(token, jwt_key) as UserJwt;
     return user;
   } catch (err) {
-    console.log("Erro JWT.verifyJWT")
     throw err;
   }
 }

@@ -7,7 +7,7 @@ const queueRoutes = express.Router();
 
 queueRoutes.post('/queue',
     authentication,
-    checkPermissions(false), 
+    checkPermissions(true), 
     (req: Request, res: Response) => {
     queueController.createQueue(req, res);
 });
@@ -26,14 +26,14 @@ queueRoutes.get('/queue/:id',
 
 queueRoutes.put('/queue/:id',
     authentication,
-    checkPermissions(false), 
+    checkPermissions(true), 
     (req: Request, res: Response) => {
     queueController.updateQueue(req, res);
 });
 
 queueRoutes.delete('/queue/:id',
     authentication,
-    checkPermissions(true), // only Admins can delete a queue 
+    checkPermissions(true), 
     (req: Request, res: Response) => {
     queueController.deleteQueue(req, res);
 });
