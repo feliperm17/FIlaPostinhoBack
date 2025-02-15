@@ -7,7 +7,7 @@ const queueRoutes = express.Router();
 
 queueRoutes.post('/queue',
     authentication,
-    checkPermissions(true), 
+    checkPermissions(false), 
     (req: Request, res: Response) => {
     queueController.createQueue(req, res);
 });
