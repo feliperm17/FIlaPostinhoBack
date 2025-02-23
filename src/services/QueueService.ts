@@ -86,19 +86,103 @@ export class QueueService {
   async getCurrentQueueSize(queueId: string) {
     try {
       const result = await db.query(queueQueries.getQueueSize, [queueId]);
-      return parseInt(result.rows[0].total);
+      return parseInt(result.rows[0]?.total);
     } catch (error) {
       console.error('Erro no QueueService.getCurrentQueueSize:', error);
       throw error;
     }
   }
 
-  async getUserPosition(queueId: string, userId: string) {
+  async nextItem(queueId: string) {
     try {
-      const result = await db.query(queueQueries.getUserPosition, [queueId, userId]);
-      return result.rows[0]?.position;
+      const result = await db.query(queueQueries.getNextItem, [queueId]);
+      const item = result.rows[0];
+      return item; //arrumar 
     } catch (error) {
-      console.error('Erro no QueueService.getUserPosition:', error);
+      console.error('Erro ao andar a fila: ', error);
+      throw error;
+    }
+  }   
+
+  async getNextItem(queueId: string) {
+    try {
+      const result = await db.query(queueQueries.getNextItem, [queueId]);
+      const item = result.rows[0];
+      return item;
+    } catch (error) {
+      console.error('Erro ao retornar o próximo item da fila: ', error);
+      throw error;
+    }
+  }
+
+  async callNextItem(queueId: string) { // teste
+    try {
+      const result = await db.query(queueQueries.getNextItem, [queueId]);
+      if (!result.rows[0]) {
+        return null; // Fila vazia
+      }
+      return result.rows[0];
+    } catch (error) {
+      console.error('Erro ao chamar próximo item:', error);
+      throw error;
+    }
+  }
+
+  async joinQueue(queueId: number, userId: number) {
+    try {
+      // Verificar se já está na fila
+      const existing = await db.query(queueQueries.checkUserInQueue, [queueId, userId]);
+      if (existing.rows.length > 0) {
+        throw new Error('Usuário já está nesta fila');
+      }
+
+      // Entrar na fila
+      const result = await db.query(queueQueries.joinQueue, [queueId, userId]);
+      return result.rows[0];
+    } catch (error) {
+      console.error('Erro ao entrar na fila:', error);
+      throw error;
+    }
+  }
+
+  async getUserPosition(queueId: number, userId: number) {
+    try {
+      const result = await db.query(queueQueries.getCurrentPosition, [queueId, userId]);
+      return result.rows[0]?.position || null;
+    } catch (error) {
+      console.error('Erro ao buscar posição:', error);
+      throw error;
+    }
+  }
+
+  async getQueueUsers(queueId: number) {
+    try {
+      const result = await db.query(queueQueries.getQueueUsers, [queueId]);
+      return result.rows;
+    } catch (error) {
+      console.error('Erro ao listar usuários da fila:', error);
+      throw error;
+    }
+  }
+
+  async advanceQueue(queueId: string) {
+    try {
+      const result = await db.query(queueQueries.advanceQueue, [queueId]);
+      
+      // Retorna o próximo usuário em atendimento ou null se a fila estiver vazia
+      return result.rows[0] || null;
+    } catch (error) {
+      console.error('Erro ao avançar a fila:', error);
+      throw error;
+    }
+  }
+
+  async getFullQueue(queueId: number) {
+    try {
+      const result = await db.query(queueQueries.getFullQueue, [queueId]);
+      return result.rows;
+    } catch (error) {
+      console.error('Erro ao listar histórico da fila:', error);
       throw error;
     }
   }

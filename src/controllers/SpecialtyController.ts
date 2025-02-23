@@ -63,4 +63,4 @@ class SpecialtyController {
   }
 }
 
-export default SpecialtyController;
+export default SpecialtyController

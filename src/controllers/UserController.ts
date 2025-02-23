@@ -13,7 +13,8 @@ class UserController {
       }
       user.cpf = user.cpf.replace(/\D/g, '');
       user.phone_nr = user.phone_nr.replace(/\D/g, '');
-      user.account_st = 0; // Normal User
+      user.account_st = 1;
+      user.is_admin = false;
       const registered = await userService.register(user);
 
       console.log(`usuario criado: ${user.email}`);
@@ -39,7 +40,8 @@ class UserController {
       }
       user.cpf = user.cpf.replace(/\D/g, '');
       user.phone_nr = user.phone_nr.replace(/\D/g, '');
-      user.account_st = 1; // ADMIN
+      user.account_st = 1;
+      user.is_admin = true;
       const registered = await userService.register(user);
 
       console.log(`usuario criado: ${user.email}`);

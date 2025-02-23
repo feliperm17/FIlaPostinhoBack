@@ -47,11 +47,123 @@ class QueueController {
   async deleteQueue(req: Request, res: Response) {
     try {
       const success = await this.queueService.delete(req.params.id);
-      if (!success) return res.status(404).json({ error: 'Fila não encontrado' });
+      if (!success) return res.status(404).json({ error: 'Fila não encontrada' });
       return res.json({ message: 'Fila deletada' });
     } catch (error) {
       return res.status(500).json({ error: 'Erro ao deletar Fila' });
     }
   }
+
+  async nextItem(req: Request, res: Response) {
+    try{
+      const success = await this.queueService.nextItem(req.params.id);
+      if (!success) return res.status(404).json({ error: 'Fila não encontrada' });
+      return res.json({ message: 'Fila avançada'});
+    } catch (error) {
+      return res.status(500).json({ error: 'Erro ao avançar na Fila' });
+    }
+  }
+
+  async getNextItem(req: Request, res: Response) {
+    try {
+      const item = await this.queueService.getNextItem(req.params.id);
+      if(!item) return res.status(404).json({ error: 'Fila não encontrada' });
+      return res.json(item);
+    } catch (error) {
+      return res.status(500).json({ error: 'Erro ao retornar o próximo item' });
+    }
+  }
+
+  async callNextItem(req: Request, res: Response) { // teste
+    try {
+      const nextItem = await this.queueService.callNextItem(req.params.queueId);
+      if (!nextItem) {
+        return res.status(404).json({ error: 'Não há mais pacientes na fila' });
+      }
+      return res.json(nextItem);
+    } catch (error) {
+      return res.status(500).json({ error: 'Erro ao avançar a fila' });
+    }
+  }
+
+  async joinQueue(req: Request, res: Response) {
+    try {
+      const queueId = parseInt(req.params.queueId);
+      const userId = res.locals.user.account_id; // ID do usuário autenticado
+
+      const queueItem = await this.queueService.joinQueue(queueId, userId);
+      return res.status(201).json(queueItem);
+    } catch (error) {
+      if (error.message === 'Usuário já está nesta fila') {
+        return res.status(409).json({ error: error.message });
+      }
+      return res.status(500).json({ error: 'Erro ao entrar na fila' });
+    }
+  }
+
+  async getUserPosition(req: Request, res: Response) {
+    try {
+      const queueId = parseInt(req.params.queueId);
+      const userId = res.locals.user.account_id;
+
+      const position = await this.queueService.getUserPosition(queueId, userId);
+      
+      if (!position) {
+        return res.status(404).json({ error: 'Você não está nesta fila' });
+      }
+
+      return res.json({ position });
+    } catch (error) {
+      return res.status(500).json({ error: 'Erro ao buscar posição na fila' });
+    }
+  }
+
+  async getQueueUsers(req: Request, res: Response) {
+    try {
+      const queueId = parseInt(req.params.queueId);
+      const users = await this.queueService.getQueueUsers(queueId);
+      
+      if (users.length === 0) {
+        return res.status(404).json({ error: 'Fila vazia ou não encontrada' });
+      }
+
+      return res.json(users);
+    } catch (error) {
+      return res.status(500).json({ error: 'Erro ao listar usuários da fila' });
+    }
+  }
+
+  async advanceQueue(req: Request, res: Response) {
+    try {
+      const queueId = req.params.queueId;
+      const nextUser = await this.queueService.advanceQueue(queueId);
+
+      if (!nextUser) {
+        return res.status(404).json({ 
+          message: 'Nenhum próximo paciente na fila',
+          current: null
+        });
+      }
+
+      return res.json({
+        message: 'Fila avançada com sucesso',
+        current: nextUser
+      });
+    } catch (error) {
+      return res.status(500).json({ error: 'Erro ao avançar a fila' });
+    }
+  }
+
+  async getFullQueue(req: Request, res: Response) {
+    try {
+      const queueId = parseInt(req.params.queueId);
+      const users = await this.queueService.getFullQueue(queueId);
+      
+      return res.json(users); // Retorna array vazio se não houver registros
+    } catch (error) {
+      return res.status(500).json({ error: 'Erro ao buscar histórico da fila' });
+    }
+  }
 }
+
 export default QueueController;

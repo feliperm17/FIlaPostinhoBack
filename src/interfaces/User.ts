@@ -6,9 +6,11 @@ export interface UserInterface {
   email: string; 
   cpf: string; 
   account_st: number;
+  is_admin ?: boolean;
   password ?: string;
 }
 
 export interface UserJwtInterface {
   email: string;
+  is_admin: boolean;
 }

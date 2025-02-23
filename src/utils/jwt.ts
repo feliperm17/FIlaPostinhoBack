@@ -5,7 +5,9 @@ const jwt_key = process.env.JWTKEY || 'secret_key';
 
 export function generateJWT(user: UserJwt){
   const token = jwt.sign(
-    { email: user.email },
+    { email: user.email,
+      is_admin: user.is_admin
+     },
     jwt_key,                       
     { expiresIn: '1h' }               
   );

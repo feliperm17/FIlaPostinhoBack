@@ -19,7 +19,7 @@ export class UserService {
 
       const result = await db.query(
         userQueries.addUser, 
-        [user.username, user.phone_nr, user.email, user.cpf, user.account_st, password_hash]
+        [user.username, user.phone_nr, user.email, user.cpf, user.account_st, user.is_admin, password_hash]
       );
       
       // Não retornar a senha no resultado
@@ -44,7 +44,7 @@ export class UserService {
 
       const result = await db.query(
         userQueries.addUser, 
-        [user.username, user.phone_nr, user.email, user.cpf, user.account_st, password_hash]
+        [user.username, user.phone_nr, user.email, user.cpf, user.account_st, user.is_admin, password_hash]
       );
       
       // Não retornar a senha no resultado
@@ -92,10 +92,10 @@ export class UserService {
 
   async update(id: string, user: User) {
     try {
-      const { username, phone_nr, email, cpf, account_st } = user;
+      const { username, phone_nr, email, cpf, account_st, is_admin } = user;
       const result = await db.query(
         userQueries.updateUser, 
-        [username, phone_nr, email, cpf, account_st, id]
+        [username, phone_nr, email, cpf, account_st, is_admin, id]
       );
       return result.rows[0];
     } catch (error) {

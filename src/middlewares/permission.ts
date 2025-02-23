@@ -10,13 +10,11 @@ export function checkPermissions(AdminPermission: boolean){
       return;
     }
 
-    if(AdminPermission === true && user.account_st != 1){
+    if(AdminPermission === true && user.is_admin === false){
       res.status(401).json({ error: "Acesso negado: Permissões insuficientes." });
       return;
     }
 
     next();
   }
-
-
 }

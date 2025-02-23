@@ -37,4 +37,40 @@ queueRoutes.delete('/queue/:id',
     (req: Request, res: Response) => {
     queueController.deleteQueue(req, res);
 });
+
+queueRoutes.post('/queue/:queueId/join',
+    authentication,
+    checkPermissions(false),
+    (req: Request, res: Response) => {
+      queueController.joinQueue(req, res);
+});
+
+queueRoutes.get('/queue/:queueId/position',
+    authentication,
+    checkPermissions(false),
+    (req: Request, res: Response) => {
+      queueController.getUserPosition(req, res);
+});
+
+queueRoutes.get('/queues/:queueId/users',
+    authentication,
+    checkPermissions(true), 
+    (req: Request, res: Response) => {
+      queueController.getQueueUsers(req, res);    
+});
+
+queueRoutes.post('/queues/:queueId/next',
+    authentication,
+    checkPermissions(true),
+    (req: Request, res: Response) => {
+      queueController.advanceQueue(req, res);
+});
+
+queueRoutes.get('/queues/:queueId/all',
+    authentication,
+    checkPermissions(true),
+    (req: Request, res: Response) => {
+      queueController.getFullQueue(req, res);
+});
+
 export default queueRoutes;

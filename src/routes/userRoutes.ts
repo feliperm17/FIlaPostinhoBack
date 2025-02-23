@@ -27,18 +27,4 @@ userRoutes.post('/auth/register/admin', (req: Request, res: Response) => {
     userController.registerAdmin(req, res);
 });
 
-userRoutes.post('/teste/1',
-  authentication,
-  checkPermissions(true),
-  (req: Request, res: Response) => {
-    res.status(200).json({'sucesso:': 'certo'});
-});
-
-userRoutes.post('/teste/2',
-  authentication,
-  checkPermissions(false),
-  (req: Request, res: Response) => {
-    res.status(200).json({'sucesso:': 'certo'});
-});
-
 export default userRoutes;
