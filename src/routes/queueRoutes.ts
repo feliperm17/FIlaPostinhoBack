@@ -52,21 +52,21 @@ queueRoutes.get('/queue/:queueId/position',
       queueController.getUserPosition(req, res);
 });
 
-queueRoutes.get('/queues/:queueId/users',
+queueRoutes.get('/queue/:queueId/users',
     authentication,
     checkPermissions(true), 
     (req: Request, res: Response) => {
       queueController.getQueueUsers(req, res);    
 });
 
-queueRoutes.post('/queues/:queueId/next',
+queueRoutes.post('/queue/:queueId/next',
     authentication,
     checkPermissions(true),
     (req: Request, res: Response) => {
       queueController.advanceQueue(req, res);
 });
 
-queueRoutes.get('/queues/:queueId/all',
+queueRoutes.get('/queue/:queueId/all',
     authentication,
     checkPermissions(true),
     (req: Request, res: Response) => {
