@@ -128,18 +128,39 @@ export class QueueService {
     }
   }
 
-  async joinQueue(queueId: number, userId: number) {
+  async joinQueue(specialtyId: number, userId: number) {
     try {
-      // Verificar se já está na fila
-      const existing = await db.query(queueQueries.checkUserInQueue, [queueId, userId]);
+      db.query('BEGIN');
+      // Encontrar ou criar fila do dia
+      const queueResult = await db.query(
+        queueQueries.findTodayQueue, 
+        [specialtyId]
+      );
+      var queueId;
+      if(!queueResult.rows[0]){
+        const queueResults = await db.query(queueQueries.createTodayQueue, [specialtyId]);
+        queueId = queueResults.rows[0].queue_id;
+      } else {
+        queueId = queueResult.rows[0].queue_id;
+      }
+      console.log(`id da queue: ${queueId}`);
+
+      // Verificar se já está na fila de hoje
+      const existing = await db.query(
+        queueQueries.checkUserInTodayQueue, 
+        [specialtyId, userId]
+      );
       if (existing.rows.length > 0) {
-        throw new Error('Usuário já está nesta fila');
+        throw new Error('Você já está na fila de hoje');
       }
 
       // Entrar na fila
-      const result = await db.query(queueQueries.joinQueue, [queueId, userId]);
-      return result.rows[0];
+      await db.query(queueQueries.joinQueue, [queueId, userId]);
+
+      await db.query('COMMIT');
+      return queueId;
     } catch (error) {
+      db.query('ROLLBACK');
       console.error('Erro ao entrar na fila:', error);
       throw error;
     }

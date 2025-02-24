@@ -38,7 +38,7 @@ queueRoutes.delete('/queue/:id',
     queueController.deleteQueue(req, res);
 });
 
-queueRoutes.post('/queue/:queueId/join',
+queueRoutes.post('/queue/:specialtyId/join',
     authentication,
     checkPermissions(false),
     (req: Request, res: Response) => {
