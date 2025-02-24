@@ -79,7 +79,27 @@ const queueQueries = {
   INNER JOIN Account a ON qi.account_id = a.account_id
   WHERE qi.queue_id = $1
   ORDER BY qi.entry_time ASC
-`
+  `,
+  checkUserInTodayQueue: `
+  SELECT 1 FROM QueueItem qi
+  JOIN Queue q ON qi.queue_id = q.queue_id
+  WHERE 
+    q.specialty = $1 AND
+    q.queue_dt = CURRENT_DATE AND
+    qi.account_id = $2
+  `,
+  findTodayQueue: `
+  SELECT queue_id FROM Queue
+  WHERE 
+    specialty = $1 AND 
+    queue_dt = CURRENT_DATE
+  LIMIT 1
+  `,
+  createTodayQueue: `
+  INSERT INTO Queue (specialty, queue_dt, position_nr, queue_size)
+  VALUES ($1, CURRENT_DATE, 0, 0)
+  RETURNING *
+  `
 };
 
 export default queueQueries;

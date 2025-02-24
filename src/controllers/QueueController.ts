@@ -88,10 +88,10 @@ class QueueController {
 
   async joinQueue(req: Request, res: Response) {
     try {
-      const queueId = parseInt(req.params.queueId);
+      const specialtyId = parseInt(req.params.specialtyId);
       const userId = res.locals.user.account_id; // ID do usuário autenticado
 
-      const queueItem = await this.queueService.joinQueue(queueId, userId);
+      const queueItem = await this.queueService.joinQueue(specialtyId, userId);
       return res.status(201).json(queueItem);
     } catch (error) {
       if (error.message === 'Usuário já está nesta fila') {
