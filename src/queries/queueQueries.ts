@@ -13,11 +13,6 @@ const queueQueries = {
   VALUES ($1, $2, NOW(), 0, 0)
   RETURNING *
   `, 
-  checkUserInQueue: `
-  SELECT * FROM QueueItem 
-  WHERE queue_id = $1 AND account_id = $2
-  AND item_st IN (0, 1)
-  `, 
   getUsersInQueue: `
   SELECT * FROM QueueItem 
   WHERE queue_id = $1
@@ -99,7 +94,52 @@ const queueQueries = {
   INSERT INTO Queue (specialty, queue_dt, position_nr, queue_size)
   VALUES ($1, CURRENT_DATE, 0, 0)
   RETURNING *
-  `
+  `,
+  getPosition: `
+    SELECT
+      q.queue_id,
+      q.specialty,
+      s.specialty_name,
+      s.estimated_time,
+      qi.item_st,
+      (
+        SELECT COUNT(*) 
+        FROM QueueItem 
+        WHERE 
+          queue_id = qi.queue_id AND 
+          item_st = 0 AND
+          entry_time < qi.entry_time
+      ) + 1 AS position
+    FROM QueueItem qi
+    JOIN Queue q ON qi.queue_id = q.queue_id
+    JOIN Specialty s ON q.specialty = s.specialty_id
+    WHERE 
+      qi.account_id = $1 AND
+      qi.item_st IN (0, 1, 5)
+  `,
+  checkUserInQueue: `
+      SELECT 
+      q.queue_id,
+      q.specialty,
+      s.specialty_name,
+      qi.entry_time,
+      qi.item_st,
+      (
+        SELECT COUNT(*) 
+        FROM QueueItem 
+        WHERE 
+          queue_id = qi.queue_id AND 
+          item_st = 0 AND
+          entry_time < qi.entry_time
+      ) + 1 AS position
+    FROM QueueItem qi
+    JOIN Queue q ON qi.queue_id = q.queue_id
+    JOIN Specialty s ON q.specialty = s.specialty_id
+    WHERE 
+      qi.account_id = $1 AND
+      qi.item_st IN (0, 1, 5) AND
+      q.queue_dt = CURRENT_DATE
+  ` 
 };
 
 export default queueQueries;

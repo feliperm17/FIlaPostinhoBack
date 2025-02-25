@@ -3,5 +3,6 @@ export enum QueueItemStatus {
   IN_PROGRESS = 1,
   ATTENDED = 2,
   SKIPPED = 3,
-  CANCELLED = 4
+  CANCELLED = 4,
+  CALLED = 5
 }

@@ -147,11 +147,11 @@ export class QueueService {
 
       // Verificar se já está na fila de hoje
       const existing = await db.query(
-        queueQueries.checkUserInTodayQueue, 
-        [specialtyId, userId]
+        queueQueries.checkUserInQueue, 
+        [userId]
       );
       if (existing.rows.length > 0) {
-        throw new Error('Você já está na fila de hoje');
+        throw new Error('Você já está em uma fila ');
       }
 
       // Entrar na fila
@@ -166,10 +166,10 @@ export class QueueService {
     }
   }
 
-  async getUserPosition(queueId: number, userId: number) {
+  async getUserPosition(userId: number) {
     try {
-      const result = await db.query(queueQueries.getCurrentPosition, [queueId, userId]);
-      return result.rows[0]?.position || null;
+      const result = await db.query(queueQueries.getPosition, [userId]);
+      return result.rows[0] || null;
     } catch (error) {
       console.error('Erro ao buscar posição:', error);
       throw error;
@@ -204,6 +204,16 @@ export class QueueService {
       return result.rows;
     } catch (error) {
       console.error('Erro ao listar histórico da fila:', error);
+      throw error;
+    }
+  }
+
+  async checkUserInQueue(userId: number) {
+    try {
+      const result = await db.query(queueQueries.checkUserInQueue, [userId]);
+      return result.rows[0] || null;
+    } catch (error) {
+      console.error('Erro ao verificar filas do usuário:', error);
       throw error;
     }
   }
