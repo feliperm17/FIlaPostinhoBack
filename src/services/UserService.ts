@@ -127,4 +127,24 @@ export class UserService {
       throw error;
     }
   }
+
+  async promote(id: string) {
+    try {
+      const result = await db.query(userQueries.promoteUser, [id]);
+      return result.rows[0];
+    } catch (error) {
+      console.error('Erro no UserService.promote:', error);
+      throw error;
+    }
+  }
+
+  async demote(id: string) { 
+    try {
+      const result = await db.query(userQueries.demoteUser, [id]);
+      return result.rows[0];
+    } catch (error) {
+      console.error('Erro no UserService.demote:', error);
+      throw error;
+    }
+  }
 }
