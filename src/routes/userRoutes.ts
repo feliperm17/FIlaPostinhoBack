@@ -26,5 +26,11 @@ userRoutes.delete('/users/:id', (req: Request, res: Response) => {
 userRoutes.post('/auth/register/admin', (req: Request, res: Response) => {
     userController.registerAdmin(req, res);
 });
+userRoutes.put('/users/promote/:id', (req: Request, res: Response) => {
+    userController.promoteUser(req, res);
+});
+userRoutes.put('/users/demote/:id', (req: Request, res: Response) => {
+    userController.demoteUser(req, res);
+});
 
 export default userRoutes;
