@@ -134,17 +134,17 @@ class UserController {
     try {
       const user = await userService.promote(req.params.id);
       if (!user) return res.status(404).json({ error: 'Usuário não encontrado' });
-      return res.json(user);
+      return res.status(200).json(user);
     } catch (error) {
       return res.status(500).json({ error: 'Erro ao promover usuário' });
-    }
+    } 
   }
 
   async demoteUser(req: Request, res: Response) {
     try {
       const user = await userService.demote(req.params.id);
       if (!user) return res.status(404).json({ error: 'Usuário não encontrado' });
-      return res.json(user);
+      return res.status(200).json(user);
     } catch (error) {
       return res.status(500).json({ error: 'Erro ao rebaixar usuário' });
     }
