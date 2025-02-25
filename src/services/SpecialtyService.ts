@@ -79,8 +79,10 @@ export class SpecialtyService {
 
   async delete(id: string) {
     try {
-      const result = await db.query(specialtyQueries.deleteSpecialty, [id]);
-      return result.rowCount > 0;
+      const result1 = await db.query(specialtyQueries.deleteItems, [id]);
+      const result2 = await db.query(specialtyQueries.deleteQueues, [id]);
+      const result3 = await db.query(specialtyQueries.deleteSpecialty, [id]);
+      return result3.rowCount > 0;
     } catch (error) {
       console.error('Erro ao deletar especialidade:', error);
       throw error;
