@@ -17,6 +17,14 @@ queueRoutes.get('/queue',
     (req: Request, res: Response) => {
     queueController.findAllQueues(req, res)}
 );
+
+queueRoutes.get('/queue/position',
+    authentication,
+    checkPermissions(false),
+    (req: Request, res: Response) => {
+      queueController.getUserPosition(req, res);
+});
+
 queueRoutes.get('/queue/:id',
     authentication,
     checkPermissions(false), 
@@ -43,13 +51,6 @@ queueRoutes.post('/queue/:specialtyId/join',
     checkPermissions(false),
     (req: Request, res: Response) => {
       queueController.joinQueue(req, res);
-});
-
-queueRoutes.get('/queue/:queueId/position',
-    authentication,
-    checkPermissions(false),
-    (req: Request, res: Response) => {
-      queueController.getUserPosition(req, res);
 });
 
 queueRoutes.get('/queue/:queueId/users',

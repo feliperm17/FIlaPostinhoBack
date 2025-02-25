@@ -91,6 +91,22 @@ class QueueController {
       const specialtyId = parseInt(req.params.specialtyId);
       const userId = res.locals.user.account_id; // ID do usuário autenticado
 
+      const currentQueue = await this.queueService.checkUserInQueue(userId);
+      if (currentQueue) {
+        return res.status(400).json({
+          error: `Você já está na fila de ${currentQueue.specialty_name}`,
+          current_queue: {
+            queue_id: currentQueue.queue_id,
+            specialty_id: currentQueue.specialty,
+            specialty: currentQueue.specialty_name,
+            item_st: currentQueue.item_st,
+            entry_time: currentQueue.entry_time,
+            position: currentQueue.position,
+            estimated_wait: currentQueue.estimated_time_per_user * currentQueue.position,
+          }
+        });
+      }
+
       const queueItem = await this.queueService.joinQueue(specialtyId, userId);
       return res.status(201).json(queueItem);
     } catch (error) {
@@ -103,16 +119,23 @@ class QueueController {
 
   async getUserPosition(req: Request, res: Response) {
     try {
-      const queueId = parseInt(req.params.queueId);
       const userId = res.locals.user.account_id;
 
-      const position = await this.queueService.getUserPosition(queueId, userId);
+      const currentQueue = await this.queueService.getUserPosition(userId);
       
-      if (!position) {
-        return res.status(404).json({ error: 'Você não está nesta fila' });
+      if (!currentQueue) {
+        return res.status(404).json({ error: 'Você não está em nenhuma fila' });
       }
 
-      return res.json({ position });
+      return res.json({ 
+        queue_id: currentQueue.queue_id,
+        specialty_id: currentQueue.specialty,
+        specialty: currentQueue.specialty_name,
+        item_st: currentQueue.item_st,
+        entry_time: currentQueue.entry_time,
+        position: currentQueue.position,
+        estimated_wait: currentQueue.estimated_time * currentQueue.position,
+       });
     } catch (error) {
       return res.status(500).json({ error: 'Erro ao buscar posição na fila' });
     }
