@@ -217,4 +217,19 @@ export class QueueService {
       throw error;
     }
   }
+
+  async leaveQueue(queueId: number, userId: number) {
+    try {
+      const result = await db.query(queueQueries.leaveQueue, [queueId, userId]);
+      
+      if (result.rowCount === 0) {
+        throw new Error('Você não está nesta fila ou já foi atendido');
+      }
+
+      return result.rows[0];
+    } catch (error) {
+      console.error('Erro ao sair da fila:', error);
+      throw error;
+    }
+  }
 }

@@ -115,7 +115,8 @@ const queueQueries = {
     JOIN Specialty s ON q.specialty = s.specialty_id
     WHERE 
       qi.account_id = $1 AND
-      qi.item_st IN (0, 1, 5)
+      qi.item_st IN (0, 1, 5) AND
+      q.queue_dt = CURRENT_DATE
   `,
   checkUserInQueue: `
       SELECT 
@@ -139,7 +140,16 @@ const queueQueries = {
       qi.account_id = $1 AND
       qi.item_st IN (0, 1, 5) AND
       q.queue_dt = CURRENT_DATE
-  ` 
+  `,
+  leaveQueue: `
+  UPDATE QueueItem
+  SET item_st = 4
+  WHERE 
+    queue_id = $1 AND 
+    account_id = $2 AND
+    item_st IN (0)
+  RETURNING *
+  `
 };
 
 export default queueQueries;
