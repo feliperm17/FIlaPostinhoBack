@@ -3,6 +3,7 @@ import {UserInterface as User, UserJwtInterface as UserJwt} from '../interfaces/
 import bcrypt from 'bcrypt';
 import userQueries from '../queries/userQueries';
 import dotenv from 'dotenv';
+import queueQueries from '../queries/queueQueries';
 dotenv.config();
 
 export class UserService {
@@ -120,6 +121,10 @@ export class UserService {
 
   async delete(id: string) {
     try {
+      const relation = await db.query(userQueries.findAllQueueItemById, [id]);
+      if(relation.rows.length > 0){
+        await db.query(queueQueries.deleteItem, [id]);
+      }
       const result = await db.query(userQueries.deleteUser, [id]);
       return result.rowCount > 0;
     } catch (error) {
