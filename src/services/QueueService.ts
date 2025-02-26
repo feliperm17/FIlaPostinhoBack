@@ -240,4 +240,30 @@ export class QueueService {
       throw error;
     }
   }
+
+  async skipUser(queueId: number) {
+    try {
+      const result = await db.query(queueQueries.skipUser, [queueId]);
+      if (result.rowCount === 0) {
+        throw new Error('Usuário não encontrado na fila');
+      }
+      return result.rows[0];
+    } catch (error) {
+      console.error('Erro ao pular usuário:', error);
+      throw error;
+    }
+  }
+
+  async confirmUser(queueId: number) {
+    try {
+      const result = await db.query(queueQueries.confirmUser, [queueId]);
+      if (result.rowCount === 0) {
+        throw new Error('Usuário não encontrado na fila');
+      }
+      return result.rows[0];
+    } catch (error) {
+      console.error('Erro ao confirmar usuário:', error);
+      throw error;
+    }
+  }
 }
