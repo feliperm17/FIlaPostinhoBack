@@ -145,10 +145,6 @@ class QueueController {
     try {
       const queueId = parseInt(req.params.queueId);
       const users = await this.queueService.getQueueUsers(queueId);
-      
-      if (users.length === 0) {
-        return res.status(404).json({ error: 'Fila vazia ou não encontrada' });
-      }
 
       return res.json(users);
     } catch (error) {
@@ -204,6 +200,30 @@ class QueueController {
         return res.status(404).json({ error: error.message });
       }
       return res.status(500).json({ error: 'Erro ao sair da fila' });
+    }
+  }
+
+  async getPosition(req: Request, res: Response) {
+    try {
+      const userId = parseInt(req.params.userId);
+
+      const currentQueue = await this.queueService.getUserPosition(userId);
+      
+      if (!currentQueue) {
+        return res.status(404).json({ error: 'Você não está em nenhuma fila' });
+      }
+
+      return res.json({ 
+        queue_id: currentQueue.queue_id,
+        specialty_id: currentQueue.specialty,
+        specialty: currentQueue.specialty_name,
+        item_st: currentQueue.item_st,
+        entry_time: currentQueue.entry_time,
+        position: currentQueue.position,
+        estimated_wait: currentQueue.estimated_time * currentQueue.position,
+       });
+    } catch (error) {
+      return res.status(500).json({ error: 'Erro ao buscar posição na fila' });
     }
   }
 }
