@@ -156,6 +156,7 @@ export class QueueService {
 
       // Entrar na fila
       await db.query(queueQueries.joinQueue, [queueId, userId]);
+      await db.query(queueQueries.updateQueueSize, [queueId]);
 
       await db.query('COMMIT');
       return queueId;
@@ -189,9 +190,14 @@ export class QueueService {
   async advanceQueue(queueId: string) {
     try {
       const result = await db.query(queueQueries.advanceQueue, [queueId]);
-      
+      if(!result.rows){
+        throw new Error('Fila vazia');
+      }
+      await db.query(queueQueries.updateQueueSize, [queueId]);
+      const id = result.rows[0].account_id;
+      const retorna = await db.query(queueQueries.getPosition, [id]);
       // Retorna o próximo usuário em atendimento ou null se a fila estiver vazia
-      return result.rows[0] || null;
+      return retorna.rows[0] || null;
     } catch (error) {
       console.error('Erro ao avançar a fila:', error);
       throw error;
@@ -225,6 +231,8 @@ export class QueueService {
       if (result.rowCount === 0) {
         throw new Error('Você não está nesta fila ou já foi atendido');
       }
+
+      await db.query(queueQueries.updateQueueSize, [queueId]);
 
       return result.rows[0];
     } catch (error) {

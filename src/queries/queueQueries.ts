@@ -13,6 +13,15 @@ const queueQueries = {
   VALUES ($1, $2, NOW(), 0, 0)
   RETURNING *
   `, 
+  updateQueueSize: `
+  UPDATE Queue
+  SET queue_size = (
+    SELECT COUNT(*)
+    FROM QueueItem qi
+    WHERE qi.queue_id = $1 AND item_st IN (0, 5)
+  )
+  WHERE queue_id = $1
+  `,
   getUsersInQueue: `
   SELECT * FROM QueueItem 
   WHERE queue_id = $1
@@ -36,7 +45,7 @@ const queueQueries = {
   INNER JOIN Account a ON qi.account_id = a.account_id
   WHERE 
     qi.queue_id = $1 AND
-    qi.item_st IN (0, 1)
+    qi.item_st = 0
   ORDER BY qi.entry_time ASC
   `,
   advanceQueue: `
@@ -62,7 +71,7 @@ const queueQueries = {
   WHERE 
     queue_id = $1 AND 
     account_id = (SELECT account_id FROM next_in_queue)
-  RETURNING *
+  RETURNING *, (SELECT account_id FROM next_in_queue)
   `,
   getFullQueue: `
   SELECT 
@@ -102,6 +111,7 @@ const queueQueries = {
       s.specialty_name,
       s.estimated_time,
       qi.item_st,
+      qi.account_id,
       (
         SELECT COUNT(*) 
         FROM QueueItem 
@@ -149,6 +159,12 @@ const queueQueries = {
     account_id = $2 AND
     item_st IN (0)
   RETURNING *
+  `,
+  getInProgress: `
+  SELECT account_id
+  FROM QueueItem qi 
+  JOIN Queue q on qi.queue_id = q.queue_id
+  WHERE item_st = 1
   `
 };
 
