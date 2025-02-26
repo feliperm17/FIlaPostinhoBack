@@ -25,6 +25,14 @@ queueRoutes.get('/queue/position',
       queueController.getUserPosition(req, res);
 });
 
+queueRoutes.get('/queue/:userId/position',
+    authentication,
+    checkPermissions(false),
+    (req: Request, res: Response) => {
+        queueController.getPosition(req,res);
+    }
+)
+
 queueRoutes.get('/queue/:id',
     authentication,
     checkPermissions(false), 
@@ -65,6 +73,20 @@ queueRoutes.post('/queue/:queueId/next',
     checkPermissions(true),
     (req: Request, res: Response) => {
       queueController.advanceQueue(req, res);
+});
+
+queueRoutes.post('/queue/:queueId/skip',
+    authentication,
+    checkPermissions(true), // Apenas admin
+    (req: Request, res: Response) => {
+      queueController.skipUser(req, res);
+});
+  
+queueRoutes.post('/queue/:queueId/confirm',
+    authentication,
+    checkPermissions(true), // Apenas admin
+    (req: Request, res: Response) => {
+        queueController.confirmUser(req, res);
 });
 
 queueRoutes.get('/queue/:queueId/all',

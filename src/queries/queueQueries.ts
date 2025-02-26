@@ -68,7 +68,7 @@ const queueQueries = {
     LIMIT 1
   )
   UPDATE QueueItem
-  SET item_st = 1
+  SET item_st = 5
   WHERE 
     queue_id = $1 AND 
     account_id = (SELECT account_id FROM next_in_queue)
@@ -166,7 +166,19 @@ const queueQueries = {
   FROM QueueItem qi 
   JOIN Queue q on qi.queue_id = q.queue_id
   WHERE item_st = 1
-  `
+  `,
+  skipUser: `
+  UPDATE QueueItem
+  SET item_st = 3
+  WHERE queue_id = $1 AND item_st = 5
+  RETURNING *
+  `,
+  confirmUser: `
+  UPDATE QueueItem
+  SET item_st = 1
+  WHERE queue_id = $1 AND item_st = 5
+  RETURNING *
+`
 };
 
 export default queueQueries;

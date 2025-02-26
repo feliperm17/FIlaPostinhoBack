@@ -226,6 +226,40 @@ class QueueController {
       return res.status(500).json({ error: 'Erro ao buscar posição na fila' });
     }
   }
+
+  async skipUser(req: Request, res: Response) {
+    try {
+      const queueId = parseInt(req.params.queueId);
+      
+      const skippedUser = await this.queueService.skipUser(queueId);
+      return res.json({ 
+        message: 'Usuário marcado como não compareceu',
+        user: skippedUser 
+      });
+    } catch (error) {
+      if (error.message === 'Usuário não encontrado na fila') {
+        return res.status(404).json({ error: error.message });
+      }
+      return res.status(500).json({ error: 'Erro ao pular usuário' });
+    }
+  }
+
+  async confirmUser(req: Request, res: Response) {
+    try {
+      const queueId = parseInt(req.params.queueId);
+      
+      const confirmedUser = await this.queueService.confirmUser(queueId);
+      return res.json({ 
+        message: 'Usuário confirmado em atendimento',
+        user: confirmedUser 
+      });
+    } catch (error) {
+      if (error.message === 'Usuário não encontrado na fila') {
+        return res.status(404).json({ error: error.message });
+      }
+      return res.status(500).json({ error: 'Erro ao confirmar usuário' });
+    }
+  }
 }
 
 export default QueueController;
