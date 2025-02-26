@@ -187,6 +187,25 @@ class QueueController {
       return res.status(500).json({ error: 'Erro ao buscar histórico da fila' });
     }
   }
+
+
+  async leaveQueue(req: Request, res: Response) {
+    try {
+      const queueId = parseInt(req.params.queueId);
+      const userId = res.locals.user.account_id;
+
+      const leftQueue = await this.queueService.leaveQueue(queueId, userId);
+      return res.json({ 
+        message: 'Você saiu da fila com sucesso',
+        details: leftQueue
+      });
+    } catch (error) {
+      if (error.message === 'Você não está nesta fila ou já foi atendido') {
+        return res.status(404).json({ error: error.message });
+      }
+      return res.status(500).json({ error: 'Erro ao sair da fila' });
+    }
+  }
 }
 
 export default QueueController;

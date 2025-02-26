@@ -74,4 +74,11 @@ queueRoutes.get('/queue/:queueId/all',
       queueController.getFullQueue(req, res);
 });
 
+queueRoutes.post('/queue/:queueId/leave',
+    authentication,
+    checkPermissions(false),
+    (req: Request, res: Response) => {
+      queueController.leaveQueue(req, res);
+});
+
 export default queueRoutes;
