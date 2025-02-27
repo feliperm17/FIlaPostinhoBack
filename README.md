@@ -48,8 +48,11 @@ Para instalar e executar o projeto, siga os passos abaixo:
 3. **Configure as variáveis de ambiente**:
    Crie um arquivo `.env` na raiz do projeto e adicione as seguintes variáveis:
    ```
-   DATABASE_URL=postgres://usuario:senha@localhost:5432/nome_do_banco
-   JWT_SECRET=seu_segredo
+   PGUSER=postgres
+   PGPASSWORD=senha
+   PGHOST=localhost
+   PGDATABASE=nome_database
+   PGPORT=5433
    ```
 
 4. **Inicie o servidor**:
@@ -60,7 +63,6 @@ Para instalar e executar o projeto, siga os passos abaixo:
 ## Scripts
 
 - `start`: Inicia o servidor utilizando `ts-node`.
-- `dev`: Inicia o servidor em modo de desenvolvimento.
 
 ## 🤝 Contribuição
 
