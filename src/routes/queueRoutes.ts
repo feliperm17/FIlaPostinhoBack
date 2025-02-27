@@ -77,14 +77,14 @@ queueRoutes.post('/queue/:queueId/next',
 
 queueRoutes.post('/queue/:queueId/skip',
     authentication,
-    checkPermissions(true), // Apenas admin
+    checkPermissions(true), 
     (req: Request, res: Response) => {
       queueController.skipUser(req, res);
 });
   
 queueRoutes.post('/queue/:queueId/confirm',
     authentication,
-    checkPermissions(true), // Apenas admin
+    checkPermissions(true), 
     (req: Request, res: Response) => {
         queueController.confirmUser(req, res);
 });

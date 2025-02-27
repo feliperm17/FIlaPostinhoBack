@@ -74,7 +74,7 @@ class QueueController {
     }
   }
 
-  async callNextItem(req: Request, res: Response) { // teste
+  async callNextItem(req: Request, res: Response) { 
     try {
       const nextItem = await this.queueService.callNextItem(req.params.queueId);
       if (!nextItem) {
@@ -89,7 +89,7 @@ class QueueController {
   async joinQueue(req: Request, res: Response) {
     try {
       const specialtyId = parseInt(req.params.specialtyId);
-      const userId = res.locals.user.account_id; // ID do usuário autenticado
+      const userId = res.locals.user.account_id; 
 
       const currentQueue = await this.queueService.checkUserInQueue(userId);
       if (currentQueue) {
@@ -178,7 +178,7 @@ class QueueController {
       const queueId = parseInt(req.params.queueId);
       const users = await this.queueService.getFullQueue(queueId);
       
-      return res.json(users); // Retorna array vazio se não houver registros
+      return res.json(users); 
     } catch (error) {
       return res.status(500).json({ error: 'Erro ao buscar histórico da fila' });
     }

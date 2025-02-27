@@ -8,6 +8,7 @@ const queueQueries = {
   getQueueSize: "SELECT queue_size FROM Queue WHERE queue_id = $1",
   getNextItem: "SELECT * FROM QueueItem WHERE queue_id = $1 AND item_st = 0 ORDER BY entry_time ASC LIMIT 1",
   updateItem: `UPDATE QueueItem SET item_st = $1 WHERE queue_id = $2 AND account_id = $3`,
+  deleteItem: `DELETE FROM QueueItem WHERE account_id = $1`,
   joinQueue: `
   INSERT INTO QueueItem (queue_id, account_id, entry_time, item_st, item_pr)
   VALUES ($1, $2, NOW(), 0, 0)

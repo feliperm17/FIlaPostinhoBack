@@ -72,7 +72,6 @@ export class QueueService {
     }
   }
 
-  // Métodos adicionais úteis
   async findBySpecialty(specialtyId: number) {
     try {
       const result = await db.query(queueQueries.getQueueBySpecialty, [specialtyId]);
@@ -115,11 +114,11 @@ export class QueueService {
     }
   }
 
-  async callNextItem(queueId: string) { // teste
+  async callNextItem(queueId: string) { 
     try {
       const result = await db.query(queueQueries.getNextItem, [queueId]);
       if (!result.rows[0]) {
-        return null; // Fila vazia
+        return null; 
       }
       return result.rows[0];
     } catch (error) {
@@ -131,7 +130,6 @@ export class QueueService {
   async joinQueue(specialtyId: number, userId: number) {
     try {
       db.query('BEGIN');
-      // Encontrar ou criar fila do dia
       const queueResult = await db.query(
         queueQueries.findTodayQueue, 
         [specialtyId]
@@ -196,7 +194,6 @@ export class QueueService {
       await db.query(queueQueries.updateQueueSize, [queueId]);
       const id = result.rows[0].account_id;
       const retorna = await db.query(queueQueries.getPosition, [id]);
-      // Retorna o próximo usuário em atendimento ou null se a fila estiver vazia
       return retorna.rows[0] || null;
     } catch (error) {
       console.error('Erro ao avançar a fila:', error);
